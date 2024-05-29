@@ -1,51 +1,58 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IProduct, IProductsState } from "../../types";
 
 const initialState: IProductsState = {
   products: [],
-
-  // since we are not fetching data from an API, we don't need to use the loading and error states
-  // loading: false,
-  // error: "",
+  loading: false,
+  error: "",
 };
 
-//since we are not fetching data from an API, we don't need to use createAsyncThunk
-// the code below is an example of how to use createAsyncThunk to fetch data from an API
-
-// const fetchProducts = createAsyncThunk('endpoint', async () => {
-//   const response = await fetch('url');
-//   return response.json();
-// });
-
-const productsFilterSlice = createSlice({
-  name: "productsFilter",
-  initialState,
-  reducers: {
-    setProducts: (state, action: PayloadAction<IProduct[]>) => {
-      state.products = action.payload;
-    },
-  },
-
-  // incase we are fetching data from an API, we can add the extraReducers property to the createSlice function
-  // and handle the loading and error states inside the slice,
-  // since we are not fetching data from an API, we don't need to use the extraReducers property
-  // and we are managing the loading state in the useProducts hook
-
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(fetchProducts.pending, (state) => {
-  //       state.loading = true;
-  //     })
-  //     .addCase(fetchProducts.fulfilled, (state, action) => {
-  //       state.products = action.payload;
-  //       state.loading = false;
-  //     })
-  //     .addCase(fetchProducts.rejected, (state) => {
-  //       state.error = true;
-  //     });
-  // },
+export const fetchProducts = createAsyncThunk<
+  IProduct[],
+  void,
+  { rejectValue: string }
+>("products/fetchProducts", async (_, { rejectWithValue }) => {
+  try {
+    const response = await fetch("https://fakestoreapi.com/products");
+    if (!response.ok) {
+      throw new Error("Failed to Fetch Data with status " + response.status);
+    }
+    const data: IProduct[] = await response.json();
+    console.log("fetched Data", data);
+    return data;
+  } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "message" in error) {
+      return rejectWithValue((error as { message: string }).message);
+    }
+    return rejectWithValue("An unknown error occurred");
+  }
 });
 
-export const { setProducts } = productsFilterSlice.actions;
+const productsSlice = createSlice({
+  name: "products",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(
+        fetchProducts.fulfilled,
+        (state, action: PayloadAction<IProduct[]>) => {
+          state.products = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(
+        fetchProducts.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Failed to Fetch Data";
+          state.loading = false;
+        }
+      );
+  },
+});
 
-export default productsFilterSlice.reducer;
+export default productsSlice.reducer;

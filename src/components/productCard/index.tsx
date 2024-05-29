@@ -13,7 +13,6 @@ export default function ActionAreaCard({ product }: { product: IProduct }) {
   return (
     <Card sx={{ width: 250, mt: 2, ml: 2 }}>
       <CardHeader
-        title={product.name}
         subheader={`$${product.price}`}
         action={
           <IconButton aria-label="settings">
@@ -25,13 +24,18 @@ export default function ActionAreaCard({ product }: { product: IProduct }) {
         sx={{ objectFit: "contain" }}
         component="img"
         height="250"
-        image={product.imageUrl}
+        image={product.image}
         alt="green iguana"
       />
       <CardContent>
-        <Typography>{product.category}</Typography>
-        <Typography variant="body2" color="text.secondary">
-          {product.description}
+        <Typography fontWeight={600}>{product.title}</Typography>
+        <Typography variant="body2" mt={1}>
+          {product.category}
+        </Typography>
+
+        <Typography mt={1} variant="body2" color="text.secondary">
+          {product.description.substring(0, 100) +
+            (product.description.length > 100 ? "..." : "")}
         </Typography>
       </CardContent>
     </Card>

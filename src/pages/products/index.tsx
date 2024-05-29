@@ -7,15 +7,18 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import LoadingCard from "../../components/loadingCard";
 import useProducts from "./hooks/useProducts";
 import { categories } from "../../constants";
+import ErrorComponent from "../../components/errorComponent";
 
 const Products = () => {
   const {
     products,
     loading,
+    error,
     handleSearchChange,
     handleCategoryChange,
     search,
@@ -51,17 +54,27 @@ const Products = () => {
         </FormControl>
       </Container>
 
-      <Container
-        sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
-      >
-        {loading
-          ? Array(8)
+      {error ? (
+        <ErrorComponent error={error} />
+      ) : (
+        <Container
+          sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+        >
+          {loading ? (
+            Array(8)
               .fill(null)
               .map((_, index) => <LoadingCard key={index} />)
-          : products.map((product) => (
+          ) : products.length > 0 ? (
+            products.map((product) => (
               <ProductCard key={product.id} product={product} />
-            ))}
-      </Container>
+            ))
+          ) : (
+            <Typography mt={3} variant="h5">
+              No Products Found
+            </Typography>
+          )}
+        </Container>
+      )}
     </Box>
   );
 };

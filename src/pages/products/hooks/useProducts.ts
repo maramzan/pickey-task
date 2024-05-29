@@ -1,17 +1,21 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { IProductsState } from "../../../types";
-import { productsData } from "../../../constants";
 import { SelectChangeEvent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setProducts } from "../../../store/slices/productsSlice";
+import { fetchProducts } from "../../../store/slices/productsSlice";
+import { AppDispatch } from "../../../store";
 
 const useProducts = () => {
-  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ search: "", category: "" });
+  const [showMessage, setShowMessage] = useState(false);
 
-  const dispatch = useDispatch();
+  const handleMessageHide = () => {
+    setShowMessage(false);
+  };
 
-  const { products } = useSelector(
+  const dispatch: AppDispatch = useDispatch();
+
+  const { products, loading, error } = useSelector(
     (state: { productState: IProductsState }) => state.productState
   );
 
@@ -29,16 +33,13 @@ const useProducts = () => {
     []
   );
 
-  // As we have a few products, we can filter them on the client-side one all the data is fetched.
-  // In case we are fetching data from an API and we want to apply filters on the server-side,
-  // we can use a technique called debouncing.
   const filteredProducts = useMemo(() => {
     const { search, category } = filters;
 
     return products.filter((product) => {
       return (
         (search
-          ? product.name.toLowerCase().includes(search.trim().toLowerCase())
+          ? product.title.toLowerCase().includes(search.trim().toLowerCase())
           : true) &&
         (category && category !== "All Categories"
           ? product.category === category
@@ -47,22 +48,20 @@ const useProducts = () => {
     });
   }, [filters, products]);
 
-  // here we are mocking an API call using setTimeout, in a real app you would fetch the data from an API
-  // if we want to use real api data, we can use the fetchProducts thunk, which is commented out in the productsSlice.ts file
   useEffect(() => {
-    setTimeout(() => {
-      dispatch(setProducts(productsData));
-      setLoading(false);
-    }, 1000);
+    dispatch(fetchProducts());
   }, [dispatch]);
 
   return {
     products: filteredProducts,
     loading,
+    error,
     handleSearchChange,
     handleCategoryChange,
     search: filters.search,
     category: filters.category,
+    handleMessageHide,
+    showMessage,
   };
 };
 

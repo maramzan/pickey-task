@@ -1,12 +1,17 @@
-export interface IProduct {
-  id: number;
-  name: string;
-  description: string;
-  category: string;
-  price: number;
-  imageUrl: string;
+export interface IRating {
+  rate: number;
+  count: number;
 }
 
+export interface IProduct {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: IRating;
+}
 export interface IProductsState {
   products: IProduct[];
   loading?: boolean;
@@ -20,13 +25,4 @@ export interface CartItem extends IProduct {
 export interface CartState {
   items: CartItem[];
   total: number;
-}
-
-export interface RootState {
-  productsFilter: {
-    products: IProduct[];
-    filteredProducts: IProduct[];
-    search: string;
-    category: string;
-  };
 }
