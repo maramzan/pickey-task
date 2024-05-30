@@ -4,6 +4,7 @@ import {
   addToCart,
   removeFromCart,
   clearCart,
+  reduceQuantity,
 } from "../../../store/slices/cartSlice";
 import { useState } from "react";
 
@@ -52,6 +53,25 @@ const useCart = () => {
     handleShowMessage("Your Order has been placed successfully");
   };
 
+  const handleItemIncrement = (id: number) => {
+    const item = cartItems.find((item) => item.id === id);
+    if (item) {
+      dispatch(addToCart({ ...item, quantity: item.quantity + 1 }));
+    }
+  };
+
+  const handleItemDecrement = (id: number) => {
+    console.log("decrement");
+    const item = cartItems.find((item) => item.id === id);
+    if (item) {
+      if (item.quantity > 1) {
+        dispatch(reduceQuantity(item.id));
+      } else {
+        dispatch(removeFromCart(id));
+      }
+    }
+  };
+
   return {
     handleAddToCart,
     cartItems,
@@ -60,6 +80,8 @@ const useCart = () => {
     openCart,
     totalPrice,
     handleRemoveCartItem,
+    handleItemDecrement,
+    handleItemIncrement,
     handleClearCart,
     showMessage,
     handleHideMessage,

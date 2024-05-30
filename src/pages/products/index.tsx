@@ -38,6 +38,8 @@ const Products = () => {
     handleCartOpen,
     totalPrice,
     handleRemoveCartItem,
+    handleItemDecrement,
+    handleItemIncrement,
     handleClearCart,
     showMessage,
     handleShowMessage,
@@ -109,6 +111,8 @@ const Products = () => {
         cartItems={cartItems}
         totalPrice={totalPrice}
         handleRemoveCartItem={handleRemoveCartItem}
+        handleItemDecrement={handleItemDecrement}
+        handleItemIncrement={handleItemIncrement}
         handleClearCart={handleClearCart}
       />
 

@@ -9,13 +9,21 @@ import {
 } from "@mui/material";
 import { ICartItem } from "../../types";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 interface ICartItemProps {
   item: ICartItem;
   handleRemoveCartItem: (id: number) => void;
+  handleItemIncrement: (id: number) => void;
+  handleItemDecrement: (id: number) => void;
 }
 
-const CartItem = ({ item, handleRemoveCartItem }: ICartItemProps) => (
+const CartItem = ({
+  item,
+  handleRemoveCartItem,
+  handleItemIncrement,
+  handleItemDecrement,
+}: ICartItemProps) => (
   <Box key={item.id}>
     <ListItem
       sx={{
@@ -54,13 +62,36 @@ const CartItem = ({ item, handleRemoveCartItem }: ICartItemProps) => (
               primary={`$${item.price.toFixed(2)}`}
             />
 
-            <ListItemText
+            <Box
               sx={{
-                color: "text.light",
-                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
               }}
-              primary={`x ${item.quantity}`}
-            />
+            >
+              <ListItemText
+                sx={{
+                  color: "text.light",
+                  fontWeight: 700,
+                  maxWidth: "50px",
+                }}
+                primary={`x ${item.quantity}`}
+              />
+              <Box>
+                <IconButton
+                  onClick={() => handleItemDecrement(item.id)}
+                  aria-label="Cart"
+                >
+                  <RemoveCircleOutlineIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() => handleItemIncrement(item.id)}
+                  aria-label="Cart"
+                >
+                  <ControlPointIcon color="primary" />
+                </IconButton>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>

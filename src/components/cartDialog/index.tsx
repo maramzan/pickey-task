@@ -18,6 +18,8 @@ interface ICartDialogProps {
   cartItems: ICartItem[];
   totalPrice?: number;
   handleRemoveCartItem: (id: number) => void;
+  handleItemIncrement: (id: number) => void;
+  handleItemDecrement: (id: number) => void;
   handleClearCart: () => void;
 }
 
@@ -28,6 +30,8 @@ export default function CartDialog(props: ICartDialogProps) {
     cartItems,
     totalPrice,
     handleRemoveCartItem,
+    handleItemIncrement,
+    handleItemDecrement,
     handleClearCart,
   } = props;
 
@@ -63,6 +67,8 @@ export default function CartDialog(props: ICartDialogProps) {
                 <CartItem
                   key={item.id}
                   item={item}
+                  handleItemDecrement={handleItemDecrement}
+                  handleItemIncrement={handleItemIncrement}
                   handleRemoveCartItem={handleRemoveCartItem}
                 />
               ))}
