@@ -18,7 +18,6 @@ export const fetchProducts = createAsyncThunk<
       throw new Error("Failed to Fetch Data with status " + response.status);
     }
     const data: IProduct[] = await response.json();
-    console.log("fetched Data", data);
     return data;
   } catch (error: unknown) {
     if (typeof error === "object" && error !== null && "message" in error) {

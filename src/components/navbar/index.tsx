@@ -7,8 +7,14 @@ import {
   Typography,
 } from "@mui/material";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
+import { useSelector } from "react-redux";
+import { ICartState } from "../../types";
 
-const Navbar = () => {
+const Navbar = ({ onCartClick }: { onCartClick: () => void }) => {
+  const totalItems = useSelector(
+    (state: { cartState: ICartState }) => state.cartState.totalItems
+  );
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -17,11 +23,11 @@ const Navbar = () => {
             {"PICKEY"}
           </Typography>
           <IconButton
+            onClick={onCartClick}
             aria-label="Cart"
             sx={{ color: "#fff" }}
-            onClick={() => {}}
           >
-            <Badge badgeContent={2} color="error">
+            <Badge badgeContent={totalItems} color="error">
               <AddShoppingCartOutlinedIcon />
             </Badge>
           </IconButton>

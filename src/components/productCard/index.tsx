@@ -9,14 +9,32 @@ import {
 import { IProduct } from "../../types";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-export default function ActionAreaCard({ product }: { product: IProduct }) {
+export default function ActionAreaCard({
+  product,
+  onAddToCart,
+  inCart,
+  handleShowMessage,
+}: {
+  product: IProduct;
+  onAddToCart: (product: IProduct) => void;
+  inCart?: boolean;
+  handleShowMessage: (message: string) => void;
+}) {
+  const handleCartClick = () => {
+    if (inCart) {
+      handleShowMessage("Item already in cart");
+    } else {
+      onAddToCart(product);
+      handleShowMessage("Item added to cart");
+    }
+  };
   return (
     <Card sx={{ width: 250, mt: 2, ml: 2 }}>
       <CardHeader
         subheader={`$${product.price}`}
         action={
-          <IconButton aria-label="settings">
-            <ShoppingCartIcon />
+          <IconButton onClick={handleCartClick} aria-label="settings">
+            <ShoppingCartIcon color={inCart ? "primary" : "inherit"} />
           </IconButton>
         }
       />
@@ -25,7 +43,7 @@ export default function ActionAreaCard({ product }: { product: IProduct }) {
         component="img"
         height="250"
         image={product.image}
-        alt="green iguana"
+        alt={product.title}
       />
       <CardContent>
         <Typography fontWeight={600}>{product.title}</Typography>

@@ -1,11 +1,13 @@
 import ProductCard from "../../components/productCard";
 import {
+  Alert,
   Box,
   Container,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -13,6 +15,9 @@ import LoadingCard from "../../components/loadingCard";
 import useProducts from "./hooks/useProducts";
 import { categories } from "../../constants";
 import ErrorComponent from "../../components/errorComponent";
+import useCart from "./hooks/useCart";
+import CartDialog from "../../components/cartDialog";
+import Navbar from "../../components/navbar";
 
 const Products = () => {
   const {
@@ -25,8 +30,24 @@ const Products = () => {
     category,
   } = useProducts();
 
+  const {
+    handleAddToCart,
+    cartItems,
+    openCart,
+    handleCartClose,
+    handleCartOpen,
+    totalPrice,
+    handleRemoveCartItem,
+    handleClearCart,
+    showMessage,
+    handleShowMessage,
+    handleHideMessage,
+    message,
+  } = useCart();
+
   return (
     <Box>
+      <Navbar onCartClick={handleCartOpen} />
       <Container sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
         <TextField
           value={search}
@@ -66,7 +87,13 @@ const Products = () => {
               .map((_, index) => <LoadingCard key={index} />)
           ) : products.length > 0 ? (
             products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                handleShowMessage={handleShowMessage}
+                key={product.id}
+                onAddToCart={handleAddToCart}
+                product={product}
+                inCart={cartItems.some((item) => item.id === product.id)}
+              />
             ))
           ) : (
             <Typography mt={3} variant="h5">
@@ -75,6 +102,30 @@ const Products = () => {
           )}
         </Container>
       )}
+
+      <CartDialog
+        open={openCart}
+        onClose={handleCartClose}
+        cartItems={cartItems}
+        totalPrice={totalPrice}
+        handleRemoveCartItem={handleRemoveCartItem}
+        handleClearCart={handleClearCart}
+      />
+
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={2000}
+        onClose={handleHideMessage}
+      >
+        <Alert
+          onClose={handleHideMessage}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

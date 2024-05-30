@@ -18,11 +18,12 @@ export interface IProductsState {
   error?: string;
 }
 
-export interface CartItem extends IProduct {
+export interface ICartItem extends IProduct {
   quantity: number;
 }
 
-export interface CartState {
-  items: CartItem[];
-  total: number;
+export interface ICartState {
+  cartItems: ICartItem[];
+  totalItems: number;
+  totalPrice: number;
 }
